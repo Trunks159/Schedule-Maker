@@ -1,0 +1,16 @@
+{%extends 'layout.html'%}
+
+{%block content%}
+    <h1 class="hello">Hi {{current_user.username}} !</h1>
+    <ul class="list">
+        {%for post in posts%}
+            <div>
+                <p> {{ post.author.username }} says:
+                    <b>
+                        {{post.body}}
+                    </b>
+                </p>
+            </div>
+        {%endfor%}
+    </ul>
+{%endblock content%}
