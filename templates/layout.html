@@ -4,21 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Smash</title>
+    <title>Scheduler</title>
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
     <div>
         <a href="{{url_for('home')}}">Home</a>
-        {%if current_user.is_anonymous%}
-        <a href="{{url_for('login')}}">Login</a>
-        <a href="{{url_for('register')}}">Register</a>
-        {%else%}
-        <a href="{{url_for('user', username = current_user.username)}}">Profile</a>
-        <a href="{{url_for('logout')}}">Logout</a>
-        {%endif%}
+        <a href="{{url_for('team')}}">Team</a>
+        <a href="{{url_for('add_worker')}}">Add Worker</a>
     </div>
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages() %} 
         {% if messages %}
             <ul>
                 {% for message in messages %}

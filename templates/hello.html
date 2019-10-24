@@ -1,16 +1,8 @@
 {%extends 'layout.html'%}
 
 {%block content%}
-    <h1 class="hello">Hi {{current_user.username}} !</h1>
-    <ul class="list">
-        {%for post in posts%}
-            <div>
-                <p> {{ post.author.username }} says:
-                    <b>
-                        {{post.body}}
-                    </b>
-                </p>
-            </div>
-        {%endfor%}
-    </ul>
+    <h1>Workers</h1>
+    {%for worker in workers%}
+    <h2>{{worker.first_name}} {{worker.last_name}}</h2>
+    {%endfor%}
 {%endblock content%}

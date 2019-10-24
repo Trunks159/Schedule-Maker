@@ -5,3 +5,7 @@
 .list {
 	color : orange;
 }
+
+.boxed{
+	border: 1px green;
+}

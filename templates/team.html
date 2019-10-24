@@ -1,0 +1,6 @@
+{%extends 'layout.html'%}
+{%block content%}
+	{%for worker in workers%}
+		{% include '_worker_info.html' %}
+	{%endfor%}
+{%endblock content%}
