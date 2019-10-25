@@ -14,11 +14,69 @@ class Worker(db.Model):
 		return [self.first_name + self.last_name, self.availability, self.off_days,
 		self.age, self.competence, self.position]
 
+	def process_availability(self, old_availability):
+		#takes availability typed by user and tyranslates that to a dictionary
+		a = self._divide(old_availability.lower())
+		days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'
+		, 'saturday', 'sunday']
+		new_availability = {}
+		for day in days:
+			for item in a:
+				if day in item:
+					new_availability[day] = item.replace(day + '=', "")
+				else:
+					new_availability[day] = True
+		return new_availability
+
+	def time_trimmer(time):
+		time = time.lower()
+		letters = ['am', 'pm', ':']
+		for element in time: 
+			for letter in letters:
+				if element is letter:
+					time -= element
+		time.replace()
+		return time
+
+	def _divide(self, text):
+		return text.replace('"', "").replace(' ', "").split(',')
+
 	def avatar(self):
 		pass 
 
 	def __repr__(self):
 		return 'Worker {}'.format(self.first_name)
+
+def time_splicer(time):
+	numbers = ['1','2','3','4','5','6','7','8','9','10','11','12']
+	i = 0
+	for letter in time:
+		if letter in numbers:
+			number = letter
+			break
+		i+=1
+	time = time.split(number)
+
+def time_converter(time):
+	time = time.lower()
+	suffix = time[len(time)-2:]
+	if suffix == 'am':
+		time = time.replace(':',"").replace('am',"")
+		c = 1 if len(time)==3 else 2
+		a = int(time[:c]) * 100
+		b = int(time[1:]) * 5/3
+	else:
+		time = time.replace(':',"").replace('pm',"")
+		c = 1 if len(time)==3 else 2
+		a = int(time[:c]) * 100 + 1200
+		b = int(time[1:]) * 5/3
+	return a + int(b)
+
+
+
+
+
+
 
 #class Post(db.Model):
 #	id = db.Column(db.Integer, primary_key = True)
