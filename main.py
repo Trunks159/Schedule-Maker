@@ -19,7 +19,7 @@ def add_worker():
             off_days = form.off_days.data,
             age = form.age.data, competence = form.competence.data, 
             position = form.position.data)
-        #w.availability = w.process_availability(form.availability.data)
+        w.availability = w.process_availability(form.availability.data)
         db.session.add(w)
         db.session.commit()
         return redirect(url_for('home'))

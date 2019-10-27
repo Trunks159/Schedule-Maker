@@ -1,4 +1,7 @@
 from config import db
+from datetime import date, datetime, time, timedelta
+
+
 
 class Worker(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -9,6 +12,7 @@ class Worker(db.Model):
 	age = db.Column(db.Integer, index = True)
 	competence = db.Column(db.String(5), index = True)
 	position = db.Column(db.String(), index = True)
+	a = ""
 
 	def info(self):
 		return [self.first_name + self.last_name, self.availability, self.off_days,
@@ -23,7 +27,7 @@ class Worker(db.Model):
 		for day in days:
 			for item in a:
 				if day in item:
-					new_availability[day] = item.replace(day + '=', "")
+					new_availability[day] = self.translate_after_3(item.replace(day + '=', ""))
 				else:
 					new_availability[day] = True
 		return new_availability
@@ -37,6 +41,24 @@ class Worker(db.Model):
 					time -= element
 		time.replace()
 		return time
+
+	def translate_after_3(self, after3):
+		end = 23
+		start = 7 
+		word = ''
+		num = ''
+		numbers = ['1','2','3','4','5','6','7','8','9','10','11','12']
+		for char in after3:
+			if char in numbers:
+				num = int(char)
+				word = after3.replace('3',"")
+				break
+		if num >= 3 and num <=6:
+			num += 12
+		if word == 'after':
+			return [num, end]
+		elif word == 'before':
+			return [start, num]
 
 	def _divide(self, text):
 		return text.replace('"', "").replace(' ', "").split(',')
@@ -72,11 +94,11 @@ def time_converter(time):
 		b = int(time[1:]) * 5/3
 	return a + int(b)
 
-
-
-
-
-
+w = Worker.query.all()
+for worker in w:
+	worker.availability = worker.process_availability(worker.availability)
+	print(worker.availability)
+#	db.session.commit()
 
 #class Post(db.Model):
 #	id = db.Column(db.Integer, primary_key = True)
