@@ -1,0 +1,56 @@
+{%extends 'layout.html'%}
+{%block content%}
+<form>
+	{{form.hidden_tag()}}
+    <p>
+        {{form.monday.label}}<br>
+        {{form.monday(size=32)}}
+        {% for error in form.monday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.tuesday.label}}<br>
+        {{form.tuesday(size=32)}}
+        {% for error in form.tuesday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.wednesday.label}}<br>
+        {{form.wednesday(size=32)}}
+        {% for error in form.wednesday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.thursday.label}}<br>
+        {{form.thursday(size=32)}}
+        {% for error in form.thursday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.friday.label}}<br>
+        {{form.friday(size=32)}}
+        {% for error in form.friday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.saturday.label}}<br>
+        {{form.saturday(size=32)}}
+        {% for error in form.saturday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.sunday.label}}<br>
+        {{form.sunday(size=32)}}
+        {% for error in form.sunday.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+	<p>{{form.submit()}}</p>
+</form>
+{%endblock content%}

@@ -1,6 +1,15 @@
 {%extends 'layout.html'%}
 {%block content%}
-<h1>Register Worker Here!</h1>
+
+{%if worker%}
+    <h1>Edit Worker</h1>
+    <a href="{{url_for('edit_availability'), worker = worker}}">Add/Edit Availability</a>
+{%else%}
+    <h1>Register Worker</h1>
+{%endif%}
+
+
+
 <form action='' method="post">
 	{{form.hidden_tag()}}
 	<p>
@@ -14,34 +23,6 @@
 		{{form.last_name.label}}<br>
     	{{form.last_name(size=32)}}
         {% for error in form.last_name.errors %}
-            <span class="error"> [{{error}}]</span>
-        {% endfor %}
-	</p>
-	<p>
-		{{form.availability.label}}<br>
-    	{{form.availability(size=32)}}
-        {% for error in form.availability.errors %}
-            <span class="error"> [{{error}}]</span>
-        {% endfor %}		
-	</p>
-	<p>
-		{{form.off_days.label}}<br>
-    	{{form.off_days(size=32)}}
-        {% for error in form.off_days.errors %}
-            <span class="error"> [{{error}}]</span>
-        {% endfor %}
-	</p>
-	<p>
-		{{form.age.label}}<br>
-    	{{form.age(size=32)}}
-        {% for error in form.age.errors %}
-            <span class="error"> [{{error}}]</span>
-        {% endfor %}
-	</p>
-	<p>
-		{{form.competence.label}}<br>
-    	{{form.competence(size=32)}}
-        {% for error in form.competence.errors %}
             <span class="error"> [{{error}}]</span>
         {% endfor %}
 	</p>

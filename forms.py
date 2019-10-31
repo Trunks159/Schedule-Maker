@@ -1,21 +1,24 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError\
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 class AddWorker(FlaskForm):
     first_name =  StringField('First Name', validators=[DataRequired()])
     last_name =  StringField('Last Name', validators=[DataRequired()])
-    availability =  TextAreaField('Availability', validators = [Length(min=0, max=140)])
     off_days =  TextAreaField('Off Days. Dates seperated by commas: DD,MM,YYYY', validators = [Length(min=0, max=140)])
-    age = StringField('Age', validators=[DataRequired()])
-    competence = StringField('Competence')
     position = StringField('Position', validators=[DataRequired()])
-    submit = SubmitField('Register Worker')
+    submit = SubmitField('Submit')
 
-class EditWorker(FlaskForm):
-    pass
-
-
+class EditAvailability(FlaskForm):
+    monday =  StringField('Monday', validators=[DataRequired()])
+    tuesday =  StringField('Tuesday', validators=[DataRequired()])
+    wednesday =  StringField('Wednesday', validators=[DataRequired()])
+    thursday =  StringField('Thursday', validators=[DataRequired()])
+    friday =  StringField('Friday', validators=[DataRequired()])
+    saturday =  StringField('Saturday', validators=[DataRequired()])
+    sunday =  StringField('Sunday', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+    
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators= [DataRequired(), Email()])
@@ -32,6 +35,12 @@ class RegistrationForm(FlaskForm):
     	user = User.query.filter_by(email = email.data).first()
     	if user is not None:
     		raise ValidationError("Please use a different Email")
+
+class EditProfileForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name =  StringField('Last Name', validators=[DataRequired()])
+    position =  StringField('Position', validators=[DataRequired()]) 
+    submit = SubmitField('Submit')
 
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

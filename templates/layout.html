@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
+    <img src="/static/images/logo.png", alt='Schedule Maker'>
     <div>
+
         <a href="{{url_for('home')}}">Home</a>
-        <a href="{{url_for('team')}}">Team</a>
         <a href="{{url_for('add_worker')}}">Add Worker</a>
+        <a href="{{url_for('edit_worker')}}">Edit Worker</a>
+        <a href="{{url_for('add_schedule')}}">Add Schedule</a>
     </div>
     {% with messages = get_flashed_messages() %} 
         {% if messages %}

@@ -1,0 +1,9 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+	{%for worker in workers%}
+		<a href="{{url_for('worker', first_name = worker.first_name)}}">
+			{{worker.first_name}} {{worker.last_name}}
+		</a>
+	{%endfor%}
+{%endblock content%}
