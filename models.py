@@ -1,4 +1,7 @@
 from config import db
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import UserMixin
+from config import login
 
 class Worker(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -8,7 +11,7 @@ class Worker(db.Model):
 	availabilities = db.relationship('Availability', backref='worker', lazy='dynamic')
 
 	def __repr__(self):
-		return 'Worker {}'.format(self.name)
+		return 'Worker {}'.format(self.first_name)
 
 class Availability(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
@@ -35,9 +38,20 @@ class Availability(db.Model):
 			if attribute in days and getattr(self, attribute) == None:
 				setattr(self, attribute, "7:00AM-11:00PM")
 
-#w = Worker(name = 'Jordan Giles', position = 'manager')
-#a = Availability(worker = w, tuesday = "12:00PM - 11:00PM")
+class User(UserMixin, db.Model):
+	id = db.Column(db.Integer, primary_key = True)
+	username = db.Column(db.String(64), index = True, unique = True)
+	password_hash = db.Column(db.String(128))
 
-#@login.user_loader
-#def load_user(id):
-#	return User.query.get(int(id))
+	def __repr__(self):
+		return 'User {}'.format(self.username)
+
+	def set_password(self, password):
+		self.password_hash = generate_password_hash(password)
+
+	def check_password(self, password):
+		return check_password_hash(self.password_hash, password)
+
+@login.user_loader
+def load_user(id):
+	return User.query.get(int(id))
