@@ -1,12 +1,11 @@
 from calendar import monthcalendar
-from datetime import date
-from models import Worker
+from datetime import date, timedelta
+#from models import Worker
+
+#scehdule = [ for day in days]
+day = date(2019, 12,17)
 
 
-
-class Schedule():
-	def __init__(self):
-		self.workers = 
 
 class Request_Off():
 	def __init__(self, worker, day):
@@ -35,8 +34,3 @@ class Day(object):
 	def __init__(self, date):
 		self.date = date
 		self.off_days = {}
-
-w = Worker(first_name = "JHope")
-m = Month(2019, 11)
-m.request_off(Request_Off(w, 22))
-print(m.days[21].off_days)

@@ -6,13 +6,11 @@ from forms import AddWorker, EditAvailability, RegistrationForm, LoginForm
 from models import Worker, Availability, User
 from flask_login import current_user, login_user, login_required, logout_user
 
-
-
 @app.route('/')
 @app.route('/home')
 def home():
-    workers = Worker.query.all()
-    return render_template('hello.html', workers = workers)
+    users = User.query.all()
+    return render_template('hello.html', users = users)
 
 @app.route('/team')
 def team():
@@ -20,23 +18,30 @@ def team():
     return render_template('team.html', workers = workers)
 
 @app.route('/add_worker', methods = ['GET', 'POST'])
+@login_required
 def add_worker():
-    form = AddWorker()
-    if form.validate_on_submit():
-        w = Worker(first_name = form.first_name.data, last_name = form.last_name.data,
-        position = form.position.data)
-        a = Availability(worker = w)
-        db.session.add(w)
-        db.session.commit()
-        flash('Worker ' + w.first_name + 'was added!')
-        return redirect(url_for('home'))
-        
-    return render_template('add_worker.html', form = form)
+    if current_user.is_gm():
+        form = AddWorker()
+        if form.validate_on_submit():
+            w = Worker(first_name = form.first_name.data, last_name = form.last_name.data,
+            position = form.position.data)
+            a = Availability(worker = w)
+            db.session.add(w)
+            db.session.commit()
+            flash('Worker ' + w.first_name + 'was added!')
+            return redirect(url_for('home'))
+        return render_template('add_worker.html', form = form)
+    flash('You must be a GM to do that')
+    return redirect(url_for('home'))
 
 @app.route('/edit_worker', methods = ['GET', 'POST'])
+@login_required
 def edit_worker():
-    workers = Worker.query.all()
-    return render_template('select_worker.html', workers = workers)
+    if current_user.is_manager():
+        workers = Worker.query.all()
+        return render_template('select_worker.html', workers = workers)
+    flash('You must be a manager to access this page')
+    return redirect(url_for('home'))
 
 @app.route('/worker/<first_name>',  methods = ['GET', 'POST'])
 def worker(first_name):
@@ -81,22 +86,25 @@ def edit_availability(worker):
     return render_template('edit_availability.html', form = form, worker = worker)
 
 @app.route('/add_schedule', methods = ['GET', 'POST'])
+@login_required
 def add_schedule():
-    return render_template('add_schedule.html')
+    if current_user.is_manager():
+        return render_template('add_schedule.html')
+    return redirect(url_for('home'))
 
 @app.route('/register', methods = ['GET', 'Post'])
 def register():
-    u = User(username = 'Trunks159')
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        u = User(username = form.username.data)
+        w = Worker.query.filter_by(first_name = form.name.data.split(' ')[0]).first()
+        u = User(username = form.username.data, worker = w)
         u.set_password(form.password.data)
         db.session.add(u)
         db.session.commit()
         flash('Congrats your registration was successful')
-        #return redirect(url_for('home'))
+        return redirect(url_for('home'))
     return render_template('register.html', form = form)
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -120,6 +128,12 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user = user)
 
 if "__name__" == "__main__":
     app.run(debug = True)

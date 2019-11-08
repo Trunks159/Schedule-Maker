@@ -2,7 +2,15 @@
 
 {%block content%}
     <h1>Workers</h1>
-    {%for worker in workers%}
-    <h2>{{worker.first_name}} {{worker.last_name}}</h2>
+    <table>
+    {%for user in users%}
+    	<tr>
+    		<td><img class = 'skull' src="{{user.avatar()}}"></td>
+    		<td>
+    			<a href="{{url_for('user', username = user.username)}}">{{user.worker.first_name}} {{user.worker.last_name}}</a>
+    		</td>
+    	</tr>
     {%endfor%}
+    			
+    </table>
 {%endblock content%}

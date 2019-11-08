@@ -1,0 +1,14 @@
+{%extends 'layout.html'%}
+{%block content%}
+
+	<table>
+		<tr valign="top">
+			<td><img src="{{user.avatar()}}"></td>
+			<td>
+				<h1>{{user.username}}</h1>
+				<p>{{user.worker.first_name}} {{user.worker.last_name}}</p>
+				<p>Position: {{user.worker.position}}</p>
+			</td>
+		</tr>
+	</table>
+{%endblock content%}

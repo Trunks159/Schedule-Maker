@@ -9,19 +9,25 @@
 </head>
 <body>
     <img src="/static/images/logo.png", alt='Schedule Maker'>
-    <div>
 
+    <div>
         <a href="{{url_for('home')}}">Home</a>
-        <a href="{{url_for('add_worker')}}">Add Worker</a>
-        <a href="{{url_for('edit_worker')}}">Edit Worker</a>
-        <a href="{{url_for('add_schedule')}}">Add Schedule</a>
         {%if current_user.is_anonymous%}
             <a href="{{url_for('register')}}">Register</a>
             <a href="{{url_for('login')}}">Login</a>
         {%else%}
+            <a href="{{url_for('user', username = current_user.username)}}">Profile</a>
+                {%if current_user.is_gm()%}
+                    <a href="{{url_for('add_worker')}}">Add Worker</a>
+                {%endif%}
+                {%if current_user.is_manager()%}
+                    <a href="{{url_for('edit_worker')}}">Edit Worker</a>
+                    <a href="{{url_for('add_schedule')}}">Add Schedule</a>
+                {%endif%}
             <a href="{{url_for('logout')}}">Logout</a>
         {%endif%}
     </div>
+
     {% with messages = get_flashed_messages() %} 
         {% if messages %}
             <ul>

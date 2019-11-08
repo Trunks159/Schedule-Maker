@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from models import User
+from models import User, Worker
 
 class AddWorker(FlaskForm):
     first_name =  StringField('First Name', validators=[DataRequired()])
@@ -27,6 +27,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 class RegistrationForm(FlaskForm):
+    name = StringField('Full Name', validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
@@ -36,3 +37,14 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username = username.data).first()
         if user is not None:
             raise ValidationError("Please use a different Username")
+
+    def validate_name(self, name):
+        workers = Worker.query.all()
+        flag = False
+        for worker in workers:
+            print(worker.first_name + worker.last_name)
+            if (worker.first_name + worker.last_name) == name.data.replace(' ', ''):
+                flag = True
+        if flag == False:
+            raise ValidationError('Name was not found among registered workers')
+   # RegistrationForm().validate_name('Bob')
