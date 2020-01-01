@@ -1,9 +1,8 @@
 from flask import render_template, flash, redirect, url_for, request
 from config import app, migrate, db
 from werkzeug.urls import url_parse
-from models import Worker, Availability
-from forms import AddWorker, EditAvailability, RegistrationForm, LoginForm
-from models import Worker, Availability, User
+from forms import AddWorker, EditAvailability, RegistrationForm, LoginForm, AddSchedule
+from models import Worker, User, Day
 from flask_login import current_user, login_user, login_required, logout_user
 
 @app.route('/')
@@ -20,15 +19,18 @@ def team():
 @app.route('/add_worker', methods = ['GET', 'POST'])
 @login_required
 def add_worker():
-    if current_user.is_gm():
+    if current_user.worker.level == 2:
         form = AddWorker()
         if form.validate_on_submit():
-            w = Worker(first_name = form.first_name.data, last_name = form.last_name.data,
-            position = form.position.data)
-            a = Availability(worker = w)
+            w = Worker(first_name = form.first_name.data.lower(), 
+                last_name = form.last_name.data.lower(),
+                level = form.level.data)
+            for i in range(7):
+                d = Day(weekday = i, worker = w)
+                db.session.add(d)
             db.session.add(w)
             db.session.commit()
-            flash('Worker ' + w.first_name + 'was added!')
+            flash('Worker ' + w.first_name + ' was added!')
             return redirect(url_for('home'))
         return render_template('add_worker.html', form = form)
     flash('You must be a GM to do that')
@@ -37,7 +39,7 @@ def add_worker():
 @app.route('/edit_worker', methods = ['GET', 'POST'])
 @login_required
 def edit_worker():
-    if current_user.is_manager():
+    if current_user.worker.level > 0:
         workers = Worker.query.all()
         return render_template('select_worker.html', workers = workers)
     flash('You must be a manager to access this page')
@@ -50,13 +52,13 @@ def worker(first_name):
     if form.validate_on_submit():
         worker.first_name = form.first_name.data
         worker.last_name = form.last_name.data
-        worker.position = form.position.data
+        worker.level = form.level.data
         db.session.commit()
         flash('Worker Info Edited!')
         return redirect(url_for('home'))
     form.first_name.data= worker.first_name
     form.last_name.data = worker.last_name
-    form.position.data = worker.position
+    form.level.data = worker.level
     return render_template('add_worker.html', form = form, worker = worker.first_name)
 
 @app.route('/edit_availability/<worker>', methods = ['GET', 'POST'])
@@ -88,8 +90,19 @@ def edit_availability(worker):
 @app.route('/add_schedule', methods = ['GET', 'POST'])
 @login_required
 def add_schedule():
+    form = AddSchedule()
+    if form.validate_on_submit():
+        schedule = Schedule(form.date.data)
+        redirect(url_for('schedule'), schedule = schedule)
     if current_user.is_manager():
-        return render_template('add_schedule.html')
+        return render_template('add_schedule.html', form = form)
+    return redirect(url_for('home'))
+
+@app.route('/schedule', methods = ['GET', 'POST'])
+@login_required
+def schedule(schedule):
+    if current_user.is_manager():
+        return render_template('select_date.html', schedule = schedule)
     return redirect(url_for('home'))
 
 @app.route('/register', methods = ['GET', 'Post'])
@@ -98,13 +111,14 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        w = Worker.query.filter_by(first_name = form.name.data.split(' ')[0]).first()
+        name = form.name.data.split(' ')[0].lower()
+        w = Worker.query.filter_by(first_name = name).first()
         u = User(username = form.username.data, worker = w)
         u.set_password(form.password.data)
         db.session.add(u)
         db.session.commit()
         flash('Congrats your registration was successful')
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
     return render_template('register.html', form = form)
 
 @app.route('/login', methods = ['GET', 'POST'])

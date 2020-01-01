@@ -7,7 +7,7 @@ class AddWorker(FlaskForm):
     first_name =  StringField('First Name', validators=[DataRequired()])
     last_name =  StringField('Last Name', validators=[DataRequired()])
     off_days =  TextAreaField('Off Days. Dates seperated by commas: DD,MM,YYYY', validators = [Length(min=0, max=140)])
-    position = StringField('Position', validators=[DataRequired()])
+    level = StringField('Level', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class EditAvailability(FlaskForm):
@@ -39,12 +39,18 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("Please use a different Username")
 
     def validate_name(self, name):
+        name = name.data.replace(' ', '').lower()
         workers = Worker.query.all()
         flag = False
         for worker in workers:
-            print(worker.first_name + worker.last_name)
-            if (worker.first_name + worker.last_name) == name.data.replace(' ', ''):
+            if (worker.first_name + worker.last_name) == name:
                 flag = True
+                if worker.user.first():
+                    raise ValidationError('This worker already has a user')
         if flag == False:
             raise ValidationError('Name was not found among registered workers')
+
+class AddSchedule(FlaskForm):
+    date =  StringField('Enter Date', validators=[DataRequired()])
+    submit = SubmitField('Submit')
    # RegistrationForm().validate_name('Bob')

@@ -5,7 +5,7 @@
     <h1>Edit Worker</h1>
     <a href="{{url_for('edit_availability', worker = worker) }}">Add/Edit Availability</a>
 {%else%}
-    <h1>Register Worker</h1>
+    <h1>Add Worker</h1>
 {%endif%}
 
 
@@ -27,9 +27,9 @@
         {% endfor %}
 	</p>
 	<p>
-		{{form.position.label}}<br>
-    	{{form.position(size=32)}}
-        {% for error in form.position.errors %}
+		{{form.level.label}}<br>
+    	{{form.level(size=32)}}
+        {% for error in form.level.errors %}
             <span class="error"> [{{error}}]</span>
         {% endfor %}
 	</p>
