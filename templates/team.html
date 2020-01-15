@@ -1,6 +1,6 @@
 {%extends 'layout.html'%}
 {%block content%}
 	{%for worker in workers%}
-		{% include '_worker_info.html' %}
+		<a href="{{url_for('worker', first_name = worker.first_name)}}">{{worker.first_name}} {{worker.last_name}}</a>
 	{%endfor%}
 {%endblock content%}
