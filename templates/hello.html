@@ -7,7 +7,7 @@
     	<tr>
     		<td><img class = 'skull' src="{{user.avatar()}}"></td>
     		<td>
-    			<a href="{{url_for('user', username = user.username)}}">{{user.worker.first_name}} {{user.worker.last_name}}</a>
+    			<a href="{{url_for('user', username = user.username)}}">{{user.first_name}} {{user.last_name}}</a>
     		</td>
     	</tr>
     {%endfor%}

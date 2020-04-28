@@ -1,32 +1,25 @@
 from flask import render_template, flash, redirect, url_for, request
 from config import app, migrate, db
 from werkzeug.urls import url_parse
-from forms import AddWorker, EditAvailability, RegistrationForm, LoginForm, AddSchedule
-from models import Worker, User, Day
+from forms import AddUser, EditAvailability, RegistrationForm, LoginForm, AddSchedule
+from models import User, Day
 from flask_login import current_user, login_user, login_required, logout_user
 
 @app.route('/')
 @app.route('/home')
 def home():
-#just shows all of the current users and their avatars
+#homes screen lists all user's names and avatars
     users = User.query.all()
     return render_template('hello.html', users = users)
 
-@app.route('/team')
-def team():
-#just shows a link for each worker
-    workers = Worker.query.all()
-    return render_template('team.html', workers = workers)
-
-@app.route('/register', methods = ['GET', 'Post'])
+@app.route('/register', methods = ['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         name = form.name.data.split(' ')[0].lower()
-        w = Worker.query.filter_by(first_name = name).first_or_404()
-        u = User(username = form.username.data, worker = w)
+        u = User(username = form.username.data)
         u.set_password(form.password.data)
         db.session.add(u)
         db.session.commit()
@@ -56,18 +49,16 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route('/worker/<first_name>')
-def worker(first_name):
-    w = Worker.query.filter_by(first_name=first_name).first()
-    av = w.availability
-    print('AVAIL: ', av)
-    return render_template('worker.html', worker = w, availability = av)
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user = user)
 
-@app.route('/edit_availability/<worker>', methods = ['GET', 'POST'])
-def edit_availability(worker):
+@app.route('/edit_availability/<username>', methods = ['GET', 'POST'])
+def edit_availability(username):
     form = EditAvailability()
-    worker = Worker.query.filter_by(first_name = worker).first_or_404()
-    current_availability = worker.availabilities.first()
+    user = User.query.filter_by(username = username).first_or_404()
     if form.validate_on_submit():
         current_availability.monday = form.monday.data
         current_availability.tuesday = form.tuesday.data
@@ -79,48 +70,37 @@ def edit_availability(worker):
         db.session.commit()
         flash('Worker Availability Edited!')
         return redirect(url_for('home'))
-    
-    form.monday.data = current_availability.monday
-    form.tuesday.data = current_availability.tuesday
-    form.wednesday.data = current_availability.wednesday
-    form.thursday.data = current_availability.thursday
-    form.friday.data = current_availability.friday
-    form.saturday.data = current_availability.saturday
-    form.sunday.data = current_availability.sunday
-    return render_template('edit_availability.html', form = form, worker = worker)
-
-
-
-@app.route('/user/<username>')
-@login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user = user)
-
+    current_availability = user.availability
+    form.monday.data = current_availability[0]
+    form.tuesday.data = current_availability[1]
+    form.wednesday.data = current_availability[2]
+    form.thursday.data = current_availability[3]
+    form.friday.data = current_availability[4]
+    form.saturday.data = current_availability[5]
+    form.sunday.data = current_availability[6]
+    return render_template('edit_availability.html', form = form, user = user)
 
 '''
 THIS IS ALL GM STUFF BELOW
 '''
-@app.route('/add_worker', methods = ['GET', 'POST'])
+@app.route('/add_user', methods = ['GET', 'POST'])
 @login_required
-def add_worker():
+def add_user():
 #so if the form submits, the worker is made, and their availability
 #list is made and put in the database and some messages are flashed
 #and you're redirected to home
 # if you're not  gm you're not allowed to view this page
     if current_user.worker.level == 2:
-        form = AddWorker()
+        form = AddUser()
         if form.validate_on_submit():
-            w = Worker(first_name = form.first_name.data.lower(), 
+            u = User(form.username.data, first_name = form.first_name.data.lower(), 
                 last_name = form.last_name.data.lower(),
                 level = form.level.data)
-            for i in range(7):
-                a = Day(weekday = i, worker = w)
-            db.session.add(w)
+            db.session.add(u)
             db.session.commit()
-            flash('Worker ' + w.first_name + ' was added!')
+            flash('User ' + u.username + ' was added!')
             return redirect(url_for('home'))
-        return render_template('add_worker.html', form = form)
+        return render_template('add_user.html', form = form)
     flash('You must be a GM to do that')
     return redirect(url_for('home'))
 
@@ -134,14 +114,6 @@ def edit_worker():
         return render_template('select_worker.html', workers = workers)
     flash('You must be a manager to access this page')
     return redirect(url_for('home'))
-
-w = Worker.query.first()
-print(w.get_level(w.level))
-#w.set_open_avail()
-#a = w.availability
-#for i in range(7):
- #   db.session.delete(a[i])
-#db.session.commit()
 
 if "__name__" == "__main__":
     app.run(debug = True)

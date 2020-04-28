@@ -6,9 +6,20 @@
 			<td><img src="{{user.avatar()}}"></td>
 			<td>
 				<h1>{{user.username}}</h1>
-				<p>{{user.worker.first_name}} {{user.worker.last_name}}</p>
-				<p>Level: {{user.worker.level}}</p>
+				<p>{{user.first_name.title()}} {{user.last_name.title()}}</p>
+				<p>Level: {{user.get_level().title()}}</p>
 			</td>
 		</tr>
 	</table>
+
+	{%for day in user.availability%}
+	<div>
+		<h1>{{day.get_weekday().title()}}</h1>
+		<p>
+			{{day.start_time}}:{{day.end_time}}
+		</p>
+	</div>
+
+	{%endfor%}
+	<a href="#">Edit Availability</a>
 {%endblock content%}
