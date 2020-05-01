@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for, request
-from config import app, migrate, db
+from config import app, db
 from werkzeug.urls import url_parse
-from forms import AddUser, EditAvailability, RegistrationForm, LoginForm, AddSchedule
-from models import User, Day
+from forms import EditAvailability, RegistrationForm, LoginForm
+from models import User
 from flask_login import current_user, login_user, login_required, logout_user
 
 @app.route('/')
@@ -10,7 +10,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 def home():
 #homes screen lists all user's names and avatars
     users = User.query.all()
-    return render_template('hello.html', users = users)
+    return render_template('index.html', users = users)
 
 @app.route('/register', methods = ['GET', 'POST'])
 def register():
@@ -18,8 +18,10 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        name = form.name.data.split(' ')[0].lower()
-        u = User(username = form.username.data)
+        u = User(username = form.username.data, first_name = form.first_name.data,
+            last_name = form.last_name.data)
+        positions = {'manager':1, 'crew':0}
+        u.position = positions[form.position.data]
         u.set_password(form.password.data)
         db.session.add(u)
         db.session.commit()
@@ -55,6 +57,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user = user)
 
+'''
 @app.route('/edit_availability/<username>', methods = ['GET', 'POST'])
 def edit_availability(username):
     form = EditAvailability()
@@ -79,41 +82,21 @@ def edit_availability(username):
     form.saturday.data = current_availability[5]
     form.sunday.data = current_availability[6]
     return render_template('edit_availability.html', form = form, user = user)
-
+'''
 '''
 THIS IS ALL GM STUFF BELOW
 '''
-@app.route('/add_user', methods = ['GET', 'POST'])
-@login_required
-def add_user():
-#so if the form submits, the worker is made, and their availability
-#list is made and put in the database and some messages are flashed
-#and you're redirected to home
-# if you're not  gm you're not allowed to view this page
-    if current_user.worker.level == 2:
-        form = AddUser()
-        if form.validate_on_submit():
-            u = User(form.username.data, first_name = form.first_name.data.lower(), 
-                last_name = form.last_name.data.lower(),
-                level = form.level.data)
-            db.session.add(u)
-            db.session.commit()
-            flash('User ' + u.username + ' was added!')
-            return redirect(url_for('home'))
-        return render_template('add_user.html', form = form)
-    flash('You must be a GM to do that')
-    return redirect(url_for('home'))
-
 @app.route('/edit_worker', methods = ['GET', 'POST'])
 @login_required
 #if you're a gm this basically gives you a list of the workers and
 # a link to edit them, you'll be redirected if not a gm
 def edit_worker():
-    if current_user.worker.level == 0:
+    if current_user.worker.position:
         workers = Worker.query.all()
         return render_template('select_worker.html', workers = workers)
     flash('You must be a manager to access this page')
     return redirect(url_for('home'))
 
 if "__name__" == "__main__":
-    app.run(debug = True)
+    app.debug = True
+    app.run()

@@ -16,5 +16,17 @@ h2{
 
 .skull{
 	width : 20px;
+}
 
+.card{
+	background-color: orange;
+	min-width: 100%;
+	min-height: 200px;
+	display: flex;
+	overflow-x: auto;
+}
+
+.card--content{
+	min-width: 200px;
+	margin: 5px;
 }

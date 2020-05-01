@@ -4,9 +4,23 @@
 <form method = 'Post'>
 	{{form.hidden_tag()}}
     <p>
-        {{form.name.label}}<br>
-        {{form.name(size=32)}}
-        {% for error in form.name.errors %}
+        {{form.first_name.label}}<br>
+        {{form.first_name(size=32)}}
+        {% for error in form.first_name.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.last_name.label}}<br>
+        {{form.last_name(size=32)}}
+        {% for error in form.last_name.errors %}
+            <span class="error"> [{{error}}]</span>
+        {% endfor %}        
+    </p>
+    <p>
+        {{form.position.label}}<br>
+        {{form.position(size=32)}}
+        {% for error in form.position.errors %}
             <span class="error"> [{{error}}]</span>
         {% endfor %}        
     </p>
