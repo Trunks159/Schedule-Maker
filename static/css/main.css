@@ -1,39 +1,59 @@
-.error{
-	color : red;
+.error {
+  color: red;
 }
 
 .list {
-	color : orange;
+  color: orange;
 }
 
-.boxed{
-	border: 1px green;
+.boxed {
+  border: 1px green;
 }
 
-h2{
-	color : green;
+h2 {
+  color: green;
 }
 
-.skull{
-	width : 20px;
+.skull {
+  width: 20px;
 }
 
-.card{
-	background-color: orange;
-	min-width: 100%;
-	min-height: 200px;
-	display: flex;
-	overflow-x: auto;
+.scrollmenu {
+  min-width: 100%;
+  min-height: 200px;
+  display: flex;
+  overflow: auto;
+  white-space: nowrap;
 }
 
-.card--content{
-	min-width: 200px;
-	margin: 5px;
+.scrollmenu li {
+  color: white;
+  min-width: 200px;
+  margin: 5px;
+  display: inline-block;
+  text-align: center;
 }
 
-.navbar{
-	position: relative;
-	float:right;
-	
+.navbar {
+  position: relative;
+  float: right;
 }
 
+.logo {
+  margin: 10px;
+}
+h1 {
+  margin: 10px;
+}
+
+.border {
+  margin: 10px;
+  padding: 10px;
+}
+.thumbnail h3 {
+  color: black;
+}
+.thumbnail h1 {
+  font-size: 200px;
+  text-align: center;
+}

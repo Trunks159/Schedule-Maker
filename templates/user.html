@@ -1,25 +1,26 @@
-{%extends 'layout.html'%}
-{%block content%}
+{%extends 'layout.html'%} {%block content%}
 
-	<table>
-		<tr valign="top">
-			<td><img  class = 'skull'src = '{{user.avatar()}}'></td>
-			<td>
-				<h1>{{user.username}}</h1>
-				<p>{{user.first_name.title()}} {{user.last_name.title()}}</p>
-				<p>Position: {{user.get_position().title()}}</p>
-			</td>
-		</tr>
-	</table>
+<table>
+  <tr valign="top">
+    <td>
+      {%include 'components/_user_thumbnail.html'%} >
+    </td>
+    <td>
+      <h1>{{user.username}}</h1>
+      <p>{{user.first_name.title()}} {{user.last_name.title()}}</p>
+      <p>{{user.get_position().title()}}</p>
+    </td>
+  </tr>
+</table>
 
-	{%for day in user.availability%}
-	<div>
-		<h1>{{day.get_weekday().title()}}</h1>
-		<p>
-			{{day.start_time}}:{{day.end_time}}
-		</p>
-	</div>
+{%for day in user.availability%}
+<div>
+  <h1>{{day.get_weekday().title()}}</h1>
+  <p>
+    {{day.start_time}}:{{day.end_time}}
+  </p>
+</div>
 
-	{%endfor%}
-	<a href="#">Edit Availability</a>
+{%endfor%}
+<a href="#">Edit Availability</a>
 {%endblock content%}

@@ -5,31 +5,34 @@ from forms import EditAvailability, RegistrationForm, LoginForm
 from models import User
 from flask_login import current_user, login_user, login_required, logout_user
 
+
 @app.route('/')
 @app.route('/home')
 def home():
-#homes screen lists all user's names and avatars
+    # homes screen lists all user's names and avatars
     users = User.query.all()
-    return render_template('index.html', users = users)
+    return render_template('index.html', users=users)
 
-@app.route('/register', methods = ['GET', 'POST'])
+
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        u = User(username = form.username.data, first_name = form.first_name.data,
-            last_name = form.last_name.data)
-        positions = {'manager':1, 'crew':0}
-        u.position = positions[form.position.data]
+        u = User(username=form.username.data, first_name=form.first_name.data,
+                 last_name=form.last_name.data)
+        positions = {'manager': 1, 'crew': 0}
+        u.position = 0 if form.position.data.lower() == 'crew' else 1
         u.set_password(form.password.data)
         db.session.add(u)
         db.session.commit()
         flash('Congrats your registration was successful')
         return redirect(url_for('login'))
-    return render_template('register.html', form = form)
+    return render_template('register.html', form=form)
 
-@app.route('/login', methods = ['GET', 'POST'])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -44,18 +47,21 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
         return redirect(next_page)
-    return render_template('login.html', form = form)
+    return render_template('login.html', form=form)
+
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
 @app.route('/user/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user = user)
+    return render_template('user.html', user=user)
+
 
 '''
 @app.route('/edit_availability/<username>', methods = ['GET', 'POST'])
@@ -86,16 +92,17 @@ def edit_availability(username):
 '''
 THIS IS ALL GM STUFF BELOW
 '''
-@app.route('/edit_worker', methods = ['GET', 'POST'])
+@app.route('/edit_worker', methods=['GET', 'POST'])
 @login_required
-#if you're a gm this basically gives you a list of the workers and
+# if you're a gm this basically gives you a list of the workers and
 # a link to edit them, you'll be redirected if not a gm
 def edit_worker():
     if current_user.worker.position:
         workers = Worker.query.all()
-        return render_template('select_worker.html', workers = workers)
+        return render_template('select_worker.html', workers=workers)
     flash('You must be a manager to access this page')
     return redirect(url_for('home'))
+
 
 if "__name__" == "__main__":
     app.debug = True

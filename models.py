@@ -1,7 +1,10 @@
 from config import db, login
+import matplotlib
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 import os
+import random
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,9 +14,14 @@ class User(UserMixin, db.Model):
     position = db.Column(db.Integer, index=True)
     avail_restriction = db.relationship(
         'AvailRestriction', backref='user', lazy=True)
-    request_offs =  db.relationship(
+    request_offs = db.relationship(
         'OffDays', backref='user', lazy=True)
     password_hash = db.Column(db.String(128))
+    color = db.Column(db.String(20), index=True, unique=True)
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.set_color()
 
     def __repr__(self):
         return 'User {}'.format(self.username)
@@ -25,11 +33,23 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def get_position(self):
-        if self.position: return 'manager'
+        if self.position:
+            return 'manager'
         return 'crew'
-    def avatar(self):
-        print(os.path.exists('static/images/Skull Icon.png'))
-        return '/static/images/Skull Icon.png'
+
+    def set_color(self):
+        while True:
+            print('Hay')
+            r = random.randint(0, 255)/255
+            g = random.randint(0, 255)/255
+            b = random.randint(0, 255)/255
+            color = matplotlib.colors.to_hex([r, g, b])
+            if User.query.filter_by(color=color).all():
+                continue
+            else:
+                break
+        self.color = color
+        db.session.commit()
 
 
 class AvailRestriction(db.Model):
@@ -57,4 +77,3 @@ class OffDays(db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
- 
