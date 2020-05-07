@@ -39,9 +39,6 @@ h2 {
   float: right;
 }
 
-.logo {
-  margin: 10px;
-}
 h1 {
   margin: 10px;
 }
@@ -56,4 +53,8 @@ h1 {
 .thumbnail h1 {
   font-size: 200px;
   text-align: center;
+}
+
+.logo {
+  margin: 10px;
 }
