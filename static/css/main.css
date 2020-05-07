@@ -58,3 +58,7 @@ h1 {
 .logo {
   margin: 10px;
 }
+
+.btn-block {
+  background-color: red;
+}
