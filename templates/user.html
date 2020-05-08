@@ -22,10 +22,15 @@
 </div>
 
 {%endfor%} {%if current_user.position%}
-<form method="POST">
-  <button type="button" class="btn btn-info btn-block">Delete User</button>
-</form>
+<button type="button" class="btn btn-info btn-block">Delete User</button>
+
 {%endif%}
+<div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';"
+    >&times;</span
+  >
+  This is an alert box.
+</div>
 
 <a href="#">Edit Availability</a>
 {%endblock content%}

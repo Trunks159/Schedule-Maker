@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from config import app, db
 from werkzeug.urls import url_parse
 from forms import EditAvailability, RegistrationForm, LoginForm
@@ -61,6 +61,18 @@ def logout():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
+
+
+'''in progress this next view'''
+@app.route('/users')
+def users():
+    users_list = User.query.all()
+    users = []
+
+    for user in users_list:
+        users.append({'username': user.username,
+                      'first_name': user.first_name})
+    return jsonify({"users": users})
 
 
 '''
