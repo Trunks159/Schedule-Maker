@@ -71,7 +71,8 @@ def users():
 
     for user in users_list:
         users.append({'username': user.username,
-                      'first_name': user.first_name})
+                      'first_name': user.first_name,
+                      'last_name': user.last_name})
     return jsonify({"users": users})
 
 

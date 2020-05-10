@@ -1,18 +1,37 @@
-import React, { useEffect } from "react";
-import logo from "./logo.svg";
+import React from "react";
 import "./App.css";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import Users from "./components/Users";
 
-function App() {
-  const [movies, setMovies] = useState();
-  useEffect(() => {
+class App extends React.Component {
+  state = { users: [] };
+
+  componentDidMount() {
     fetch("/users").then((response) =>
       response.json().then((data) => {
-        console.log(data);
+        this.addUsers(data.users);
       })
     );
-  }, []);
+  }
 
-  return <div className="App"></div>;
+  addUsers = (users) => {
+    this.setState({ users: users });
+  };
+
+  render() {
+    return (
+      <Router>
+        <div className="App">
+          <Users users={this.state.users} />
+        </div>
+      </Router>
+    );
+  }
 }
 
 export default App;
