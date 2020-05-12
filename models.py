@@ -18,10 +18,21 @@ class User(UserMixin, db.Model):
         'OffDays', backref='user', lazy=True)
     password_hash = db.Column(db.String(128))
     color = db.Column(db.String(20), index=True, unique=True)
+    slug = db.Column(db.String(20), index=True, unique=True)
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.set_color()
+
+    def to_json(self):
+        return{
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'position': self.position,
+            'color': self.color,
+            'slug': self.slug,
+        }
 
     def __repr__(self):
         return 'User {}'.format(self.username)

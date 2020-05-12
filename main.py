@@ -68,12 +68,14 @@ def user(username):
 def users():
     users_list = User.query.all()
     users = []
-
     for user in users_list:
-        users.append({'username': user.username,
-                      'first_name': user.first_name,
-                      'last_name': user.last_name})
-    return jsonify({"users": users})
+        users.append(user.to_json())
+    return jsonify({"users": users, 'current_user': current_user.to_json()})
+
+
+@app.route('/getUrl')
+def getUrl(x):
+    return jsonify({'url': url_for(x)})
 
 
 '''
